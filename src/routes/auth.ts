@@ -16,7 +16,6 @@ authRoutes.get('/nonce', async (c) => {
     
     return c.text(nonce);
   } catch (error) {
-    console.error('Error generating nonce:', error);
     return c.json({ error: 'Failed to generate nonce' }, 500);
   }
 });
@@ -27,6 +26,7 @@ authRoutes.post('/verify', async (c) => {
     const authRequest: AuthRequest = await c.req.json();
     const sessionId = cookieManager.getSessionId(c);
     
+ 
     if (!sessionId) {
       return c.json({ error: 'No session found' }, 401);
     }
@@ -37,7 +37,6 @@ authRoutes.post('/verify', async (c) => {
     
     return c.json(authResult);
   } catch (error) {
-    console.error('Error verifying message:', error);
     
     if (error instanceof Error) {
       return c.json({ error: error.message }, 400);
@@ -54,7 +53,6 @@ authRoutes.post('/logout', (c) => {
     
     return c.json({ success: true });
   } catch (error) {
-    console.error('Error during logout:', error);
     return c.json({ error: 'Failed to logout' }, 500);
   }
 });

@@ -8,12 +8,11 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-// Sessions table (replaces in-memory nonce storage)
+// Sessions table (for nonce storage only - deleted after verification)
 export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
   sessionId: varchar('session_id', { length: 64 }).notNull().unique(),
   nonce: varchar('nonce', { length: 64 }).notNull(),
-  userId: uuid('user_id').references(() => users.id),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

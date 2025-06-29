@@ -51,7 +51,7 @@ class AuthService {
       throw new Error('Invalid signature');
     }
 
-    // Create or get user
+    // Create or get user (for user tracking)
     let user = await db
       .select()
       .from(users)
@@ -60,20 +60,12 @@ class AuthService {
     
     if (user.length === 0) {
       // Create new user
-      const newUser = await db
+      await db
         .insert(users)
-        .values({ walletAddress: parsedMessage.address })
-        .returning();
-      user = newUser;
+        .values({ walletAddress: parsedMessage.address });
     }
 
-    // Update session with user ID
-    await db
-      .update(sessions)
-      .set({ userId: user[0].id })
-      .where(eq(sessions.sessionId, sessionId));
-
-    // Clean up used nonce
+    // Clean up used nonce (session no longer needed after verification)
     await nonceService.removeNonce(sessionId);
 
     return {

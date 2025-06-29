@@ -6,30 +6,37 @@ import type { NonceData } from '../types/auth';
 
 class NonceService {
   async generateNonce(): Promise<{ nonce: string; sessionId: string }> {
-    const nonce = randomBytes(32).toString('hex');
-    const sessionId = randomBytes(16).toString('hex');
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-    
-    await db.insert(sessions).values({
-      sessionId,
-      nonce,
-      expiresAt,
-      userId: null, // Will be set when user authenticates
-    });
-    
-    return { nonce, sessionId };
+    try {
+      const nonce = randomBytes(32).toString('hex');
+      const sessionId = randomBytes(16).toString('hex');
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+      
+      await db.insert(sessions).values({
+        sessionId,
+        nonce,
+        expiresAt,
+      });
+      
+      return { nonce, sessionId };
+    } catch (error) {   
+      throw new Error('Database connection failed');
+    }
   }
 
   async getNonce(sessionId: string): Promise<NonceData | undefined> {
+    
     const result = await db
       .select()
       .from(sessions)
       .where(eq(sessions.sessionId, sessionId))
       .limit(1);
     
-    if (result.length === 0) return undefined;
+    if (result.length === 0) {
+      return undefined;
+    }
     
     const session = result[0];
+    
     return {
       nonce: session.nonce,
       timestamp: session.createdAt!.getTime(),
