@@ -2,15 +2,15 @@ import { Hono } from 'hono';
 import { nonceService } from '../services/nonce';
 import { authService } from '../services/auth';
 import { cookieManager } from '../utils/cookies';
-import type { AuthRequest, AuthStatus, ProtectedResponse } from '../types/auth';
+import type { AuthRequest, AuthStatus } from '../types/auth';
 
 const authRoutes = new Hono();
 
 
 // Generate nonce endpoint
-authRoutes.get('/nonce', (c) => {
+authRoutes.get('/nonce', async (c) => {
   try {
-    const { nonce, sessionId } = nonceService.generateNonce();
+    const { nonce, sessionId } = await nonceService.generateNonce();
     
     cookieManager.setSessionCookie(c, sessionId);
     

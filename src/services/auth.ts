@@ -1,5 +1,8 @@
 import { verifyMessage } from 'viem';
 import { parseSiweMessage } from 'viem/siwe';
+import { db } from '../db/connection';
+import { users, sessions } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import { nonceService } from './nonce';
 import type { AuthRequest, AuthResponse } from '../types/auth';
 
@@ -19,7 +22,7 @@ class AuthService {
     }
 
     // Get stored nonce
-    const storedData = nonceService.getNonce(sessionId);
+    const storedData = await nonceService.getNonce(sessionId);
     if (!storedData) {
       throw new Error('Invalid or expired nonce');
     }
@@ -48,8 +51,30 @@ class AuthService {
       throw new Error('Invalid signature');
     }
 
+    // Create or get user
+    let user = await db
+      .select()
+      .from(users)
+      .where(eq(users.walletAddress, parsedMessage.address))
+      .limit(1);
+    
+    if (user.length === 0) {
+      // Create new user
+      const newUser = await db
+        .insert(users)
+        .values({ walletAddress: parsedMessage.address })
+        .returning();
+      user = newUser;
+    }
+
+    // Update session with user ID
+    await db
+      .update(sessions)
+      .set({ userId: user[0].id })
+      .where(eq(sessions.sessionId, sessionId));
+
     // Clean up used nonce
-    nonceService.removeNonce(sessionId);
+    await nonceService.removeNonce(sessionId);
 
     return {
       success: true,
