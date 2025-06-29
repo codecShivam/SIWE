@@ -5,7 +5,19 @@ Backend API for wallet authentication using SIWE (Sign-In with Ethereum).
 ## 🚀 Quick Start
 
 ```bash
+# Install dependencies
 bun install
+
+# Start PostgreSQL database
+docker-compose up -d
+
+# Generate database migrations
+bun run db:generate
+
+# Run migrations
+bun run db:migrate
+
+# Start development server
 bun dev
 # API runs on http://localhost:8080
 ```
@@ -22,22 +34,50 @@ bun dev
 - `GET /api/auth/status` - Check auth status
 
 ### Protected Routes (Requires Auth)
-- `GET /api/a/profile` - User profile
+- `GET /api/a/profile` - User profile data
 
 ## 🔧 How It Works
 
-1. Get nonce from `/auth/nonce`
+1. Get nonce from `/api/auth/nonce`
 2. Sign message with wallet
-3. Send signature to `/auth/verify`  
-4. Access protected routes under `/a/*`
+3. Send signature to `/api/auth/verify` 
+4. Access protected routes under `/api/a/*` 
+
+## 🗄️ Database Setup
+
+### Environment Variables
+Create a `.env` file:
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/evm_wallet  # your db url
+PORT=8080
+```
+
+### Database Commands
+```bash
+# Start PostgreSQL with Docker
+docker-compose up -d
+
+# Generate migration files
+bun run db:generate
+
+# Apply migrations to database
+bun run db:migrate
+
+# Open database GUI (optional)
+bun run db:studio
+```
 
 ## 🛡️ Security
 
 - SIWE message verification
 - HTTP-only cookies
-- Session management
+- Persistent session management with PostgreSQL
+- Database-backed user authentication
 
 ## 📦 Tech Stack
 
 - **Framework**: Hono.js
+- **Database**: PostgreSQL
+- **ORM**: Drizzle ORM
+- **Crypto**: Viem  
 - **Runtime**: Bun
