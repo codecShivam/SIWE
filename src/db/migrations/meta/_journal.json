@@ -15,6 +15,20 @@
       "when": 1751240207531,
       "tag": "0001_spicy_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753036572431,
+      "tag": "0002_silky_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1753036934930,
+      "tag": "0003_public_raza",
+      "breakpoints": true
     }
   ]
 }

@@ -19,6 +19,7 @@ class NonceService {
       
       return { nonce, sessionId };
     } catch (error) {   
+      console.error('Database error in generateNonce:', error);
       throw new Error('Database connection failed');
     }
   }

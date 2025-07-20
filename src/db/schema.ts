@@ -1,14 +1,14 @@
 import { pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
 
-// Users table
+// users table
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   walletAddress: varchar('wallet_address', { length: 42 }).notNull().unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
-// Sessions table (for nonce storage only - deleted after verification)
+// sessions table
 export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
   sessionId: varchar('session_id', { length: 64 }).notNull().unique(),
@@ -17,7 +17,7 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-// Export types
+// export types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
