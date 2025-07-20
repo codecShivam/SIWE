@@ -17,8 +17,20 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// profiles table
+export const profiles = pgTable('profiles', {
+  userId: uuid('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 100 }), // Optional
+  email: varchar('email', { length: 255 }).unique(), // Optional, proper length
+  avatar: varchar('avatar', { length: 500 }), // Optional, longer for URLs
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
+});
+
 // export types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
-export type NewSession = typeof sessions.$inferInsert; 
+export type NewSession = typeof sessions.$inferInsert;
+export type Profile = typeof profiles.$inferSelect;
+export type NewProfile = typeof profiles.$inferInsert; 
