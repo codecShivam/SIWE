@@ -5,7 +5,6 @@ export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   walletAddress: varchar('wallet_address', { length: 42 }).notNull().unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 // sessions table
@@ -20,9 +19,9 @@ export const sessions = pgTable('sessions', {
 // profiles table
 export const profiles = pgTable('profiles', {
   userId: uuid('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
-  name: varchar('name', { length: 100 }), // Optional
-  email: varchar('email', { length: 255 }).unique(), // Optional, proper length
-  avatar: varchar('avatar', { length: 500 }), // Optional, longer for URLs
+  name: varchar('name', { length: 100 }), 
+  email: varchar('email', { length: 255 }).unique(), 
+  avatar: varchar('avatar', { length: 500 }), 
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
 });

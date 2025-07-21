@@ -16,7 +16,6 @@ protectedRoutes.get('/profile', async (c) => {
       userId: users.id,
       walletAddress: users.walletAddress,
       userCreatedAt: users.createdAt,
-      userUpdatedAt: users.updatedAt,
       name: profiles.name,
       email: profiles.email,
       avatar: profiles.avatar,
@@ -39,7 +38,6 @@ protectedRoutes.get('/profile', async (c) => {
       id: data.userId,
       walletAddress: data.walletAddress,
       createdAt: data.userCreatedAt,
-      updatedAt: data.userUpdatedAt,
     },
     profile: data.name || data.email || data.avatar ? {
       name: data.name,
@@ -129,7 +127,7 @@ protectedRoutes.delete('/profile', async (c) => {
     }
     
     const userId = user[0].id;
-          
+
     const deletedProfile = await db
       .delete(profiles)
       .where(eq(profiles.userId, userId))
