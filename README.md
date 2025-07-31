@@ -81,3 +81,6 @@ bun run db:studio
 - **ORM**: Drizzle ORM
 - **Crypto**: Viem  
 - **Runtime**: Bun
+
+### Integration template: 
+https://github.com/codecShivam/SIWE-ui
