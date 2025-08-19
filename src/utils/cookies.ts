@@ -13,9 +13,9 @@ export interface CookieOptions {
 class CookieManager {
   private getDefaultOptions(): CookieOptions {
     return {
-      httpOnly: false, // Change to false temporarily for debugging
+      httpOnly: true, // Change to false temporarily for debugging
       secure: true, // Keep true for HTTPS
-      sameSite: 'none', // Required for cross-origin
+      sameSite: 'none', 
       path: '/',
     };
   }
