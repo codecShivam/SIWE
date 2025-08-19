@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import * as schema from './schema';
 
 // Database connection URL
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/evm_wallet';
+const DATABASE_URL = process.env.DATABASE_URL!;
 
 // Create connection
 const sql = postgres(DATABASE_URL);
