@@ -6,16 +6,20 @@ import type { AuthRequest, AuthStatus } from '../types/auth';
 
 const authRoutes = new Hono();
 
-
 // Generate nonce endpoint
 authRoutes.get('/nonce', async (c) => {
   try {
     const { nonce, sessionId } = await nonceService.generateNonce();
     
+    console.log('🔍 Setting session cookie:', sessionId);
     cookieManager.setSessionCookie(c, sessionId);
+    
+    // Debug: Log all response headers
+    console.log('🔍 Response headers:', Object.fromEntries(c.res.headers.entries()));
     
     return c.text(nonce);
   } catch (error) {
+    console.error('❌ Nonce generation error:', error);
     return c.json({ error: 'Failed to generate nonce' }, 500);
   }
 });
@@ -23,11 +27,18 @@ authRoutes.get('/nonce', async (c) => {
 // Verify message and authenticate
 authRoutes.post('/verify', async (c) => {
   try {
+    // Debug: Log all incoming headers and cookies
+    const headerEntries = Array.from(c.req.raw.headers.entries());
+    console.log('🔍 Incoming request headers:', Object.fromEntries(headerEntries));
+    console.log('🔍 Cookie header:', c.req.header('cookie'));
+    
     const authRequest: AuthRequest = await c.req.json();
     const sessionId = cookieManager.getSessionId(c);
     
- 
+    console.log('🔍 Retrieved sessionId from cookie:', sessionId);
+
     if (!sessionId) {
+      console.log('❌ No session found in cookies');
       return c.json({ error: 'No session found' }, 401);
     }
 
@@ -37,6 +48,7 @@ authRoutes.post('/verify', async (c) => {
     
     return c.json(authResult);
   } catch (error) {
+    console.error('❌ Verify error:', error);
     
     if (error instanceof Error) {
       return c.json({ error: error.message }, 400);

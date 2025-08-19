@@ -6,22 +6,28 @@ export interface CookieOptions {
   secure?: boolean;
   sameSite?: 'strict' | 'lax' | 'none';
   maxAge?: number;
+  domain?: string;
+  path?: string;
 }
 
 class CookieManager {
   private getDefaultOptions(): CookieOptions {
     return {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      httpOnly: false, // Change to false temporarily for debugging
+      secure: true, // Keep true for HTTPS
+      sameSite: 'none', // Required for cross-origin
+      path: '/',
     };
   }
 
   setSessionCookie(c: Context, sessionId: string): void {
-    setCookie(c, 'sessionId', sessionId, {
+    const options = {
       ...this.getDefaultOptions(),
       maxAge: 10 * 60 // 10 minutes
-    });
+    };
+    
+    console.log('🔍 Setting session cookie with options:', options);
+    setCookie(c, 'sessionId', sessionId, options);
   }
 
   setAuthCookies(c: Context, userAddress: string): void {
@@ -41,7 +47,9 @@ class CookieManager {
   }
 
   getSessionId(c: Context): string | null {
-    return getCookie(c, 'sessionId') || null;
+    const sessionId = getCookie(c, 'sessionId') || null;
+    console.log('🔍 Getting sessionId from cookie:', sessionId);
+    return sessionId;
   }
 
   getUserAddress(c: Context): string | null {
