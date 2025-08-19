@@ -41,9 +41,20 @@ class CookieManager {
   }
 
   clearAuthCookies(c: Context): void {
-    deleteCookie(c, 'authenticated');
-    deleteCookie(c, 'userAddress');
-    deleteCookie(c, 'sessionId');
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none' as const,
+      path: '/',
+      maxAge: 0, // This expires the cookie immediately
+    };
+
+    // Set cookies with maxAge: 0 to expire them
+    setCookie(c, 'authenticated', '', options);
+    setCookie(c, 'userAddress', '', options);
+    setCookie(c, 'sessionId', '', options);
+    
+    console.log('🔍 Clearing all auth cookies');
   }
 
   getSessionId(c: Context): string | null {

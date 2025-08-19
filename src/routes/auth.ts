@@ -61,10 +61,15 @@ authRoutes.post('/verify', async (c) => {
 // Logout endpoint
 authRoutes.post('/logout', (c) => {
   try {
+    console.log('🔍 Logout request - cookies before clearing:', c.req.header('cookie'));
+    
     cookieManager.clearAuthCookies(c);
+    
+    console.log('🔍 Logout response headers:', Object.fromEntries(c.res.headers.entries()));
     
     return c.json({ success: true });
   } catch (error) {
+    console.error('❌ Logout error:', error);
     return c.json({ error: 'Failed to logout' }, 500);
   }
 });
